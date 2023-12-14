@@ -37,15 +37,15 @@ class PokemonDetailActivity : AppCompatActivity() {
         detailViewModel = ViewModelProvider(this)[DetailViewModel::class.java]
         detailViewModel.getPokemonDetail(name)
 
-        detailViewModel.errorMsg.observe(this){
+        detailViewModel.errorMsg.observe(this) {
             showError(it)
         }
 
-        detailViewModel.isLoading.observe(this){
+        detailViewModel.isLoading.observe(this) {
             showLoading(it)
         }
 
-        detailViewModel.pokemonDetail.observe(this){
+        detailViewModel.pokemonDetail.observe(this) {
             binding.tvName.text = it.name
             Glide.with(this).load(it.sprites?.frontDefault).into(binding.ivImage)
 
@@ -67,8 +67,16 @@ class PokemonDetailActivity : AppCompatActivity() {
     private fun showLoading(isLoading: Boolean) {
         if (isLoading) {
             binding.recyclerViewDetail.visibility = View.GONE
+            binding.tvName.visibility = View.GONE
+            binding.tvAbilities.visibility = View.GONE
+            binding.ivImage.visibility = View.GONE
+            binding.progressBar.visibility = View.VISIBLE
         } else {
+            binding.progressBar.visibility = View.GONE
             binding.recyclerViewDetail.visibility = View.VISIBLE
+            binding.tvName.visibility = View.VISIBLE
+            binding.tvAbilities.visibility = View.VISIBLE
+            binding.ivImage.visibility = View.VISIBLE
         }
     }
 }
