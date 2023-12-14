@@ -73,11 +73,13 @@ class MainActivity : AppCompatActivity() {
         binding.toolbar.setOnMenuItemClickListener {
             when (it.itemId) {
                 R.id.ascending -> {
-                    mainViewModel.sortAscending(binding.searchBar.text.toString())
+                    val searchInput = "%${binding.searchBar.text.toString().trim()}%"
+                    mainViewModel.sortAscending(searchInput)
                     true
                 }
                 R.id.descending -> {
-                    mainViewModel.sortDescending(binding.searchBar.text.toString())
+                    val searchInput = "%${binding.searchBar.text.toString().trim()}%"
+                    mainViewModel.sortDescending(searchInput)
                     true
                 }
                 else -> false
