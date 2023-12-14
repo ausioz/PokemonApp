@@ -7,12 +7,11 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.example.pokemonapp.data.local.entity.PokemonListEntity
-import com.example.pokemonapp.data.remote.response.ResultsItem
 
 @Dao
 interface PokemonDao {
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertList(pokemon: PokemonListEntity)
 
     @Delete

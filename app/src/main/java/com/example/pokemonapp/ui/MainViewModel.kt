@@ -2,13 +2,11 @@ package com.example.pokemonapp.ui
 
 
 import android.app.Application
-import android.content.ContentValues
 import android.util.Log
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewModelScope
 import com.example.pokemonapp.data.local.entity.PokemonListEntity
 import com.example.pokemonapp.data.local.room.PokemonDatabase
@@ -21,13 +19,12 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class MainViewModel(var application: Application) : ViewModel() {
+class MainViewModel(application: Application) : ViewModel() {
 
     val db: PokemonDatabase = PokemonDatabase.getInstance(application)
 
-
-    private val _listPokemons = MutableLiveData<List<ResultsItem>>()
-    val listPokemons: LiveData<List<ResultsItem>> = _listPokemons
+    private var _listPokemons = MutableLiveData<List<ResultsItem>>()
+    var listPokemons: LiveData<List<ResultsItem>> = _listPokemons
 
     private var _listQuery = MutableLiveData<List<PokemonListEntity>>()
 
@@ -38,10 +35,6 @@ class MainViewModel(var application: Application) : ViewModel() {
     val errorMsg: LiveData<String> = _errorMsg
 
 
-    init {
-        initPokemons()
-    }
-
     fun findPokemon(name: String) {
         viewModelScope.launch(Dispatchers.IO) {
             _listQuery.postValue(db.pokemonDao().searchPokemon(name))
@@ -49,10 +42,12 @@ class MainViewModel(var application: Application) : ViewModel() {
                 _listPokemons.postValue(listOf(ResultsItem(it.name, it.url)))
             }
         }
+        Log.d("asd", _listPokemons.value.toString())
     }
 
 
-    private fun initPokemons() {
+
+    fun initPokemons() {
         _isLoading.value = true
 
         val client = ApiConfig.getApiService().getPokemonList()

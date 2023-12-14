@@ -2,20 +2,14 @@ package com.example.pokemonapp.ui
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Toast
-import androidx.activity.viewModels
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.viewModelScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.pokemonapp.data.local.entity.PokemonListEntity
-import com.example.pokemonapp.data.local.room.PokemonDatabase
 import com.example.pokemonapp.data.remote.response.ResultsItem
 import com.example.pokemonapp.databinding.ActivityMainBinding
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
@@ -37,12 +31,16 @@ class MainActivity : AppCompatActivity() {
         mainViewModel.errorMsg.observe(this) {
             showError(it)
         }
+        mainViewModel.initPokemons()
 
         mainViewModel.listPokemons.observe(this){
             if (it == null){
                 showLoading(true)
                 Toast.makeText(this, "Not Found", Toast.LENGTH_SHORT).show()
-            } else setData(it)
+            } else {
+                setData(it)
+                Log.d("qwe", it.toString())
+            }
         }
 
         with(binding)
@@ -53,7 +51,6 @@ class MainActivity : AppCompatActivity() {
                 searchView.hide()
                 val searchInput = "%${searchBar.text.toString().trim()}%"
                 mainViewModel.findPokemon(searchInput)
-
                 if (searchBar.text.isEmpty()) {
                     Toast.makeText(
                         this@MainActivity, "Kata kunci harus diisi", Toast.LENGTH_SHORT

@@ -32,7 +32,7 @@ class PokemonDetailActivity : AppCompatActivity() {
             @Suppress("DEPRECATION") intent.getParcelableExtra(PokemonListAdapter.EXTRA_POKEMON) as? ResultsItem
         }
         val name = parcel?.name.toString()
-        val url = parcel?.url.toString()
+//        val url = parcel?.url.toString()
 
         detailViewModel = ViewModelProvider(this)[DetailViewModel::class.java]
         detailViewModel.getPokemonDetail(name)
