@@ -23,10 +23,8 @@ class MainViewModel(application: Application) : ViewModel() {
 
     val db: PokemonDatabase = PokemonDatabase.getInstance(application)
 
-    private var _listPokemons = MutableLiveData<List<ResultsItem>>()
-    var listPokemons: LiveData<List<ResultsItem>> = _listPokemons
-
-    private var _listQuery = MutableLiveData<List<PokemonListEntity>>()
+    private val _listPokemons = MutableLiveData<List<ResultsItem>>()
+    val listPokemons: LiveData<List<ResultsItem>> = _listPokemons
 
     private val _isLoading = MutableLiveData<Boolean>()
     val isLoading: LiveData<Boolean> = _isLoading
@@ -34,20 +32,32 @@ class MainViewModel(application: Application) : ViewModel() {
     private val _errorMsg = MutableLiveData<String>()
     val errorMsg: LiveData<String> = _errorMsg
 
-
-    fun findPokemon(name: String) {
-        viewModelScope.launch(Dispatchers.IO) {
-            _listQuery.postValue(db.pokemonDao().searchPokemon(name))
-            _listQuery.value?.forEach {
-                _listPokemons.postValue(listOf(ResultsItem(it.name, it.url)))
-            }
-        }
-        Log.d("asd", _listPokemons.value.toString())
+    init {
+        initPokemons()
     }
 
+    fun searchPokemon(name: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            _listPokemons.postValue(db.pokemonDao().searchPokemon(name))
+            Log.d("asd", "${db.pokemonDao().searchPokemon(name)}")
+        }
+    }
 
+    fun sortAscending(name:String){
+        searchPokemon(name)
+        viewModelScope.launch(Dispatchers.IO) {
+            _listPokemons.postValue(db.pokemonDao().getPokemonListAscending(name))
+        }
+    }
 
-    fun initPokemons() {
+    fun sortDescending(name:String){
+        searchPokemon(name)
+        viewModelScope.launch(Dispatchers.IO) {
+            _listPokemons.postValue(db.pokemonDao().getPokemonListDescending(name))
+        }
+    }
+
+    private fun initPokemons() {
         _isLoading.value = true
 
         val client = ApiConfig.getApiService().getPokemonList()
